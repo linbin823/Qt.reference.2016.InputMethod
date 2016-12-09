@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>image/capital.png</file>
+        <file>image/chinese.png</file>
+        <file>image/delete.png</file>
+        <file>image/enter.png</file>
+        <file>image/handwriting.png</file>
+        <file>image/hidekeyboard.png</file>
+        <file>image/space.png</file>
+    </qresource>
+</RCC>
