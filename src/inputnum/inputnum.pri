@@ -1,3 +1,5 @@
+QT += sql
+
 HEADERS += \    
     $$PWD/frminputnum.h    
            

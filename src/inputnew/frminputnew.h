@@ -1,4 +1,4 @@
-#ifndef FRMINPUTNEW_H
+﻿#ifndef FRMINPUTNEW_H
 #define FRMINPUTNEW_H
 
 #include <QtGui>

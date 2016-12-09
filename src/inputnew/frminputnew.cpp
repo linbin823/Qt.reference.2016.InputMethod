@@ -1,4 +1,4 @@
-#include "frminputnew.h"
+﻿#include "frminputnew.h"
 #include "ui_frminputnew.h"
 
 frmInputNew *frmInputNew::_self = 0;

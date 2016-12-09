@@ -1,3 +1,5 @@
+QT += sql
+
 HEADERS += $$PWD/frminputnew.h
            
 SOURCES += $$PWD/frminputnew.cpp
