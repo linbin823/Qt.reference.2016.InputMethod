@@ -1,4 +1,9 @@
-﻿#include "frminputnew.h"
+﻿//for msvc2010 sp1 compiler
+#if _MSC_VER >= 1600
+#pragma execution_character_set("utf-8")
+#endif
+
+#include "frminputnew.h"
 #include "ui_frminputnew.h"
 
 frmInputNew *frmInputNew::_self = 0;
@@ -200,7 +205,6 @@ bool frmInputNew::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::MouseButtonPress) {
         QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-
         if (mouseEvent->button() == Qt::LeftButton) {
             if (obj == ui->labCh0) {
                 setChinese(0);
@@ -222,15 +226,19 @@ bool frmInputNew::eventFilter(QObject *obj, QEvent *event)
                 setChinese(8);
             } else if (obj == ui->labCh9) {
                 setChinese(9);
+            //正在编辑中，且没有按到btnClose
             } else if (currentEditType != "" && obj != ui->btnClose) {
                 QString objName = obj->objectName();
-
+                //按到其他对象（不是本输入法面板上的控件）的情况
+                //首先过滤：1、该对象是根对象。2、该对象有noinput:true的属性。3、该对象名称为frmMainWindow、frmInputWindow、qt_edit_menu、labPY
+                //满足以上任何一条，则无任何动作
                 if (obj->parent() != 0x0 && !obj->property("noinput").toBool() && objName != "frmMainWindow"
                         && objName != "frmInputWindow" && objName != "qt_edit_menu" && objName != "labPY") {
+                    //当：该对象继承自QGroupBox或QFrame或QMenu，则隐藏输入法。否则则显示输入法
                     if (obj->inherits("QGroupBox") || obj->inherits("QFrame") || obj->inherits("QMenu")) {
                         this->hide();
                     } else {
-                        showPanel();
+//                        showPanel();
                     }
                 }
             }
