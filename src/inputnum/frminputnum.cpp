@@ -128,11 +128,24 @@ void frmInputNum::focusChanged(QWidget *oldWidget, QWidget *nowWidget)
 
 #endif
 
-		//如果对应属性noinput为真则不显示
+        //如果对应属性noinput为真则隐藏本数字键盘
 		if (nowWidget->property("noinput").toBool()) {
 			QTimer::singleShot(0, this, SLOT(hide()));
 			return;
 		}
+
+        //20161211新增
+        //如果对应属性numinput不存在或为假，则隐藏本数字键盘
+        QVariant numinput = nowWidget->property("numinput");
+        //qDebug()<<"frmInputNum::focusChanged"<<numinput;
+        if ( !numinput.isValid() ){
+            QTimer::singleShot(0, this, SLOT(hide()));
+            return;
+        }
+        else if( numinput.toBool() == false ){
+            QTimer::singleShot(0, this, SLOT(hide()));
+            return;
+        }
 
 		isFirst = false;
 
@@ -201,38 +214,45 @@ void frmInputNum::focusChanged(QWidget *oldWidget, QWidget *nowWidget)
 bool frmInputNum::eventFilter(QObject *obj, QEvent *event)
 {
 	if (event->type() == QEvent::MouseButtonPress) {
-		if (currentEditType != "") {
-			if (obj != ui->btnClose) {
-                QString objName = obj->objectName();
-                if (obj->parent() != 0x0 && !obj->property("noinput").toBool() && objName != "frmMainWindow"
-                        && objName != "frmInputWindow" && objName != "qt_edit_menu" && objName != "labPY") {
-                    if (obj->inherits("QGroupBox") || obj->inherits("QFrame") || obj->inherits("QMenu")) {
-                        this->hide();
-                    } else {
-                        showPanel();
-                    }
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        if (mouseEvent->button() == Qt::LeftButton) {
+            //正在编辑中
+            if (currentEditType != "") {
+//                //20161211修改
+//                //没有按到btnClose
+//                if (obj != ui->btnClose) {
+//                    QString objName = obj->objectName();
+//                    if (obj->parent() != 0x0 && !obj->property("noinput").toBool() && objName != "frmMainWindow"
+//                            && objName != "frmInputWindow" && objName != "qt_edit_menu" && objName != "labPY") {
+//                        if (obj->inherits("QGroupBox") || obj->inherits("QFrame") || obj->inherits("QMenu")) {
+//                            this->hide();
+//                        } else {
+//                            showPanel();
+//                        }
+//                    }
+//                }
+
+                btnPress = (QPushButton *)obj;
+
+                if (checkPress()) {
+                    isPress = true;
+                    timerPress->start(500);
                 }
-			}
+            }
 
-			btnPress = (QPushButton *)obj;
 
-			if (checkPress()) {
-				isPress = true;
-				timerPress->start(500);
-			}
-		}
+            return false;
+        }
+    } else if (event->type() == QEvent::MouseButtonRelease) {
+        btnPress = (QPushButton *)obj;
 
-		return false;
-	} else if (event->type() == QEvent::MouseButtonRelease) {
-		btnPress = (QPushButton *)obj;
+        if (checkPress()) {
+            isPress = false;
+            timerPress->stop();
+        }
 
-		if (checkPress()) {
-			isPress = false;
-			timerPress->stop();
-		}
-
-		return false;
-	}
+        return false;
+    }
 
 	return QWidget::eventFilter(obj, event);
 }

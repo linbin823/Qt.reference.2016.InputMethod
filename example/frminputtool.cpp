@@ -27,18 +27,20 @@ void frmInputTool::initForm()
 {
 	setWindowTitle("输入法调用示例");
 	ui->txt->setProperty("noinput", true);
+    ui->spinBox->setProperty("numinput", true);
+    ui->doubleSpinBox->setProperty("numinput", true);
 
 	//以下方法打开中文输入法
     frmInput::Instance()->init("control", "silvery", 10, 10);
 
 	//以下方法打开新版中文输入法
-//	frmInputNew::Instance()->init("control", "black", 12, 10, 700, 230, 20, 20, 6, 45);
+    frmInputNew::Instance()->init("control", "black", 12, 10, 700, 230, 20, 20, 6, 45);
 
 	//以下方法打开定制中文输入法
 	//frmInputUser::Instance()->init("bottom", 20, 18, 1280, 350, 45, 45, 7, 60);
 
 	//以下方法打开数字键盘
-	//frmInputNum::Instance()->init("black", 10);
+    frmInputNum::Instance()->init("black", 10);
 }
 
 void frmInputTool::on_btnDialog_clicked()

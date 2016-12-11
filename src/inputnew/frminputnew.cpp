@@ -228,23 +228,24 @@ bool frmInputNew::eventFilter(QObject *obj, QEvent *event)
                 setChinese(9);
             //正在编辑中，且没有按到btnClose
             } else if (currentEditType != "" && obj != ui->btnClose) {
-                QString objName = obj->objectName();
-                //按到其他对象（不是本输入法面板上的控件）的情况
-                //首先过滤：1、该对象是根对象。2、该对象有noinput:true的属性。3、该对象名称为frmMainWindow、frmInputWindow、qt_edit_menu、labPY
-                //满足以上任何一条，则无任何动作
-                if (obj->parent() != 0x0 && !obj->property("noinput").toBool() && objName != "frmMainWindow"
-                        && objName != "frmInputWindow" && objName != "qt_edit_menu" && objName != "labPY") {
-                    //当：该对象继承自QGroupBox或QFrame或QMenu，则隐藏输入法。否则则显示输入法
-                    if (obj->inherits("QGroupBox") || obj->inherits("QFrame") || obj->inherits("QMenu")) {
-                        this->hide();
-                    } else {
-//                        showPanel();
-                    }
-                }
+//                //20161211尝试修改
+//                QString objName = obj->objectName();
+//                //也就是说按到其他对象（即不是本输入法面板上的控件）
+//                //首先过滤：1、该对象是根对象。2、该对象有noinput:true的属性。3、该对象名称为frmMainWindow、frmInputWindow、qt_edit_menu、labPY
+//                //满足以上任何一条，则无任何动作
+//                if (obj->parent() != 0x0 && !obj->property("noinput").toBool() && objName != "frmMainWindow"
+//                        && objName != "frmInputWindow" && objName != "qt_edit_menu" && objName != "labPY") {
+//                    //当：该对象继承自QGroupBox或QFrame或QMenu，则隐藏输入法。否则则显示输入法
+//                    if (obj->inherits("QGroupBox") || obj->inherits("QFrame") || obj->inherits("QMenu")) {
+//                        this->hide();
+//                    } else {
+////                        showPanel();
+//                    }
+//                }
             }
 
             btnPress = (QPushButton *)obj;
-
+            //检查是否按下了本输入法的按键
             if (checkPress()) {
                 isPress = true;
                 timerPress->start(500);
@@ -393,6 +394,14 @@ void frmInputNew::focusChanged(QWidget *oldWidget, QWidget *nowWidget)
 
         //如果对应属性noinput为真则不显示
         if (nowWidget->property("noinput").toBool()) {
+            QTimer::singleShot(0, this, SLOT(hide()));
+            return;
+        }
+
+        //20161211新增
+        //如果对应属性numinput存在且为真则不显示
+        QVariant numinput = nowWidget->property("numinput");
+        if (numinput.isValid() && numinput.toBool() == true ) {
             QTimer::singleShot(0, this, SLOT(hide()));
             return;
         }

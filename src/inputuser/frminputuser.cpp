@@ -396,6 +396,14 @@ void frmInputUser::focusChanged(QWidget *oldWidget, QWidget *nowWidget)
 			return;
 		}
 
+        //20161211新增
+        //如果对应属性numinput存在且为真则不显示
+        QVariant numinput = nowWidget->property("numinput");
+        if (numinput.isValid() && numinput.toBool() == true ) {
+            QTimer::singleShot(0, this, SLOT(hide()));
+            return;
+        }
+
 		isFirst = false;
 
 		if (nowWidget->inherits("QLineEdit")) {
